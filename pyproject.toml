@@ -22,6 +22,9 @@ dev = ["pytest>=8.3,<9", "ruff>=0.8,<1"]
 [project.scripts]
 forge-pr = "forge_pr.cli:app"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/forge_pr"]
 
