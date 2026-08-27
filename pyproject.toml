@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "forge-pr"
+version = "0.1.0"
+description = "RAG-grounded pull-request validation and CI quality gates"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.8,<3",
+  "typer>=0.12,<1",
+  "rich>=13.7,<15",
+  "langgraph>=0.6,<1",
+  "forge-context @ git+https://github.com/MDowlen/forge-context.git@main",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<9", "ruff>=0.8,<1"]
+
+[project.scripts]
+forge-pr = "forge_pr.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/forge_pr"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B"]
+ignore = ["B008"]
