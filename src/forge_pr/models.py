@@ -55,11 +55,38 @@ class TestSuggestion(BaseModel):
     priority: Severity = Severity.warning
 
 
+class GeneratedTest(BaseModel):
+    target: str
+    proposed_path: str
+    framework: str = "pytest"
+    content: str
+    rationale: str
+
+
+class TestExecution(BaseModel):
+    command: list[str]
+    passed: bool
+    exit_code: int
+    stdout: str = ""
+    stderr: str = ""
+    duration_seconds: float = Field(ge=0.0)
+
+
 class DeterministicCheck(BaseModel):
     name: str
     passed: bool
     blocking: bool = False
     detail: str
+
+
+class AgentReviewOutput(BaseModel):
+    findings: list[ReviewFinding] = Field(default_factory=list)
+    summary: str
+
+
+class AgentTestOutput(BaseModel):
+    suggestions: list[TestSuggestion] = Field(default_factory=list)
+    generated_tests: list[GeneratedTest] = Field(default_factory=list)
 
 
 class ReviewReport(BaseModel):
@@ -69,6 +96,8 @@ class ReviewReport(BaseModel):
     summary: str
     findings: list[ReviewFinding]
     tests: list[TestSuggestion]
+    generated_tests: list[GeneratedTest] = Field(default_factory=list)
+    test_executions: list[TestExecution] = Field(default_factory=list)
     deterministic_checks: list[DeterministicCheck]
     changed_files: list[str]
     context_confidence: float = Field(ge=0.0, le=1.0)
@@ -80,5 +109,7 @@ class WorkflowState(BaseModel):
     context_pack: dict[str, Any] | None = None
     findings: list[ReviewFinding] = Field(default_factory=list)
     tests: list[TestSuggestion] = Field(default_factory=list)
+    generated_tests: list[GeneratedTest] = Field(default_factory=list)
+    test_executions: list[TestExecution] = Field(default_factory=list)
     deterministic_checks: list[DeterministicCheck] = Field(default_factory=list)
     report: ReviewReport | None = None
