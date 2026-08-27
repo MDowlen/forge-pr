@@ -3,6 +3,7 @@ from __future__ import annotations
 from .ai import OpenAIReviewClient
 from .checks import deterministic_diff_checks
 from .context import ForgeContextAdapter
+from .executor import TestExecutor
 from .models import (
     EvidenceRef,
     GateDecision,
@@ -139,6 +140,11 @@ def test_plan_node(state: WorkflowState) -> dict:
             "generated_tests": _safe_generated_tests(output.generated_tests),
         }
     return {"tests": _fallback_test_plan(state), "generated_tests": []}
+
+
+def test_execution_node(state: WorkflowState) -> dict:
+    executions = TestExecutor().run(state.repo_path, state.generated_tests)
+    return {"test_executions": executions}
 
 
 def gate_node(state: WorkflowState) -> dict:
